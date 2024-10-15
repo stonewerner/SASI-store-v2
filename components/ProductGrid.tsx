@@ -9,20 +9,20 @@ export default function ProductGrid({ products }: { products: any }) {
         {products.map((product: any) => (
           <Link href={`/product/${product.id}`} key={product.id}>
             <Card className="h-full flex flex-col hover:shadow-lg transition-shadow duration-300">
-              <CardContent className="p-2 flex-grow">
-                <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-200">
+              <CardContent className="p-4 flex-grow flex flex-col">
+                <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-200 mb-4">
                   <Image
                     src={product.thumbnail_url}
                     alt={product.name}
                     width={300}
                     height={300}
-                    className="object-cover object-center hover:opacity-75 transition-opacity duration-300"
+                    className="object-cover object-center w-full h-full hover:opacity-75 transition-opacity duration-300"
                   />
                 </div>
-                <h3 className="mt-2 text-sm font-medium text-foreground truncate">{product.name}</h3>
+                <h3 className="text-sm font-medium text-foreground line-clamp-2 flex-grow">{product.name}</h3>
               </CardContent>
-              <CardFooter className="p-2">
-                <p className="text-lg font-semibold text-foreground">${product.retail_price}</p>
+              <CardFooter className="p-4 pt-0">
+                <p className="text-lg font-semibold text-foreground">${product.retail_price.toFixed(2)}</p>
               </CardFooter>
             </Card>
           </Link>

@@ -9,8 +9,6 @@ import { ModeToggle } from '@/components/mode-toggle';
 export default function Header() {
   const { cart } = useCart();
 
-  console.log('Header rendering, cart:', cart);
-
   return (
     <header className="bg-background shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">

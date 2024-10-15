@@ -16,22 +16,29 @@ export default function CartPage() {
   }, []);
 
   const handleCheckout = async () => {
-    const stripe = await stripePromise;
-    const response = await fetch('/api/create-checkout-session', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ items: cart }),
-    });
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items: cart }),
+      });
 
-    const session = await response.json();
-    const result = await stripe!.redirectToCheckout({
-      sessionId: session.id,
-    });
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
 
-    if (result.error) {
-      console.error(result.error.message);
+      const { sessionId } = await response.json();
+      const stripe = await stripePromise;
+      const result = await stripe!.redirectToCheckout({ sessionId });
+
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      // Show error to user
     }
   };
 

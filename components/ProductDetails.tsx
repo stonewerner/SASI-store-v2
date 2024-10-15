@@ -5,19 +5,14 @@ import { useState } from 'react';
 import { useCart } from '@/components/CartProvider';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ProductDetails({ product }: { product: any }) {
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const { addToCart, cart } = useCart();
+  const { toast } = useToast();
 
   const handleAddToCart = () => {
-    console.log("Adding to cart:", {
-      id: selectedVariant.id,
-      name: product.name,
-      price: selectedVariant.retail_price,
-      variant: selectedVariant.name,
-      quantity: 1,
-    });
     addToCart({
       id: selectedVariant.id,
       name: product.name,
@@ -25,7 +20,11 @@ export default function ProductDetails({ product }: { product: any }) {
       variant: selectedVariant.name,
       quantity: 1,
     });
-    console.log("Current cart:", cart);
+
+    toast({
+      title: "Product added to cart",
+      description: `${product.name} (${selectedVariant.name}) has been added to your cart.`,
+    });
   };
 
   return (
