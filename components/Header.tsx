@@ -13,10 +13,20 @@ export default function Header() {
     <header className="bg-background shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold">
-          Print On Demand Store
+          SASI Store
         </Link>
         <nav>
           <ul className="flex space-x-4 items-center">
+            <li>
+              <Link href="/about" className="text-foreground hover:text-primary">
+                About
+              </Link>
+            </li>
+            <li>
+              <Link href="/terms-of-sale" className="text-foreground hover:text-primary">
+                Terms of Sale
+              </Link>
+            </li>
             <li>
               <Link href="/cart">
                 <Button variant="ghost">
