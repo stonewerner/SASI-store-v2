@@ -6,7 +6,7 @@ export default async function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">Welcome to Our Print On Demand Store</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">SASI Store</h1>
       <ProductGrid products={products} />
     </div>
   );

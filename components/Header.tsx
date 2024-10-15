@@ -1,13 +1,15 @@
 "use client";
 
 import Link from 'next/link';
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/components/CartProvider';
 import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
 
 export default function Header() {
   const { cart } = useCart();
+
+  console.log('Header rendering, cart:', cart);
 
   return (
     <header className="bg-background shadow-md">

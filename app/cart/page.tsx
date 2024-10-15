@@ -1,13 +1,19 @@
 "use client";
 
-import { useCart } from '@/hooks/useCart';
+import { useCart } from '@/components/CartProvider';
 import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity } = useCart();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleCheckout = async () => {
     const stripe = await stripePromise;
@@ -29,6 +35,10 @@ export default function CartPage() {
     }
   };
 
+  if (!isClient) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
@@ -41,6 +51,7 @@ export default function CartPage() {
               <div>
                 <h2 className="text-lg font-semibold">{item.name}</h2>
                 <p>Price: ${item.price}</p>
+                <p>Variant: {item.variant}</p>
                 <div className="flex items-center mt-2">
                   <Button
                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -59,7 +70,7 @@ export default function CartPage() {
           ))}
           <div className="mt-8">
             <p className="text-xl font-bold mb-4">
-              Total: ${cart.reduce((total: any, item: any) => total + item.price * item.quantity, 0).toFixed(2)}
+              Total: ${cart.reduce((total: number, item: any) => total + item.price * item.quantity, 0).toFixed(2)}
             </p>
             <Button onClick={handleCheckout}>Proceed to Checkout</Button>
           </div>

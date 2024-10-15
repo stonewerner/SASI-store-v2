@@ -19,10 +19,10 @@ export default function ProductGrid({ products }: { products: any }) {
                     className="object-cover object-center hover:opacity-75 transition-opacity duration-300"
                   />
                 </div>
-                <h3 className="mt-2 text-sm font-medium text-gray-900 truncate">{product.name}</h3>
+                <h3 className="mt-2 text-sm font-medium text-foreground truncate">{product.name}</h3>
               </CardContent>
               <CardFooter className="p-2">
-                <p className="text-lg font-semibold text-gray-900">${product.retail_price}</p>
+                <p className="text-lg font-semibold text-foreground">${product.retail_price}</p>
               </CardFooter>
             </Card>
           </Link>
