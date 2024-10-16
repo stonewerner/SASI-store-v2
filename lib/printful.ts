@@ -38,7 +38,12 @@ function getMockData(endpoint: string) {
 
 export async function fetchProducts() {
   const data = await fetchFromPrintful('/store/products');
-  return data.result;
+  return data.result.map((product: any) => ({
+    id: product.id,
+    name: product.name,
+    thumbnail_url: product.thumbnail_url,
+    retail_price: product.retail_price,
+  }));
 }
 
 export async function fetchProductDetails(id: string) {

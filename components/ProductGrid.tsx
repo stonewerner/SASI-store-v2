@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
-export default function ProductGrid({ products }: { products: any }) {
+export default function ProductGrid({ products }: { products: any[] }) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -12,7 +12,7 @@ export default function ProductGrid({ products }: { products: any }) {
               <CardContent className="p-4 flex-grow flex flex-col">
                 <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-200 mb-4">
                   <Image
-                    src={product.thumbnail_url}
+                    src={product.thumbnail_url || '/placeholder-image.jpg'}
                     alt={product.name}
                     width={300}
                     height={300}
@@ -22,7 +22,9 @@ export default function ProductGrid({ products }: { products: any }) {
                 <h3 className="text-sm font-medium text-foreground line-clamp-2 flex-grow">{product.name}</h3>
               </CardContent>
               <CardFooter className="p-4 pt-0">
-                <p className="text-lg font-semibold text-foreground">${product.retail_price.toFixed(2)}</p>
+                <p className="text-lg font-semibold text-foreground">
+                  {product.retail_price ? `$${product.retail_price.toFixed(2)}` : 'Price not available'}
+                </p>
               </CardFooter>
             </Card>
           </Link>

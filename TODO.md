@@ -1,0 +1,1 @@
+- a variant object has a retail price

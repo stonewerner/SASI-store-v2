@@ -14,7 +14,7 @@ export default function Header() {
     <header className="bg-background shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href="/" className="flex items-center">
-          <Image src="/SASI_icon1.png" alt="SASI Store" width={40} height={40} />
+          <Image src="/SASI_icon1.png" alt="SASI Store" width={40} height={40} className='dark:invert' />
           <span className="text-2xl font-bold ml-2">SASI Store</span>
         </Link>
         <nav>
