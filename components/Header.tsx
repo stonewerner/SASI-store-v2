@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '@/components/CartProvider';
 import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,8 +13,9 @@ export default function Header() {
   return (
     <header className="bg-background shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold">
-          SASI Store
+        <Link href="/" className="flex items-center">
+          <Image src="/SASI_icon1.png" alt="SASI Store" width={40} height={40} />
+          <span className="text-2xl font-bold ml-2">SASI Store</span>
         </Link>
         <nav>
           <ul className="flex space-x-4 items-center">
