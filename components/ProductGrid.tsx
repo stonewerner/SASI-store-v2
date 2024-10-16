@@ -23,7 +23,7 @@ export default function ProductGrid({ products }: { products: any[] }) {
               </CardContent>
               <CardFooter className="p-4 pt-0">
                 <p className="text-sm text-muted-foreground">
-                  {product.variants} variant{product.variants !== 1 ? 's' : ''}
+                  {product.variants} size{product.variants !== 1 ? 's' : ''}
                 </p>
               </CardFooter>
             </Card>

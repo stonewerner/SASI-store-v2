@@ -4,6 +4,7 @@ import { useCart } from '@/components/CartProvider';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
+import Image from 'next/image';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -55,19 +56,28 @@ export default function CartPage() {
         <>
           {cart.map((item: any) => (
             <div key={item.id} className="flex items-center justify-between border-b py-4">
-              <div>
-                <h2 className="text-lg font-semibold">{item.name}</h2>
-                <p>Price: ${item.price}</p>
-                <p>Variant: {item.variant}</p>
-                <div className="flex items-center mt-2">
-                  <Button
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    disabled={item.quantity === 1}
-                  >
-                    -
-                  </Button>
-                  <span className="mx-2">{item.quantity}</span>
-                  <Button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</Button>
+              <div className="flex items-center">
+                <Image
+                  src={item.thumbnail || '/placeholder-image.jpg'}
+                  alt={item.name}
+                  width={80}
+                  height={80}
+                  className="object-cover rounded-md mr-4"
+                />
+                <div>
+                  <h2 className="text-lg font-semibold">{item.name}</h2>
+                  <p>Price: ${item.price}</p>
+                  <p>Variant: {item.variant}</p>
+                  <div className="flex items-center mt-2">
+                    <Button
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      disabled={item.quantity === 1}
+                    >
+                      -
+                    </Button>
+                    <span className="mx-2">{item.quantity}</span>
+                    <Button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</Button>
+                  </div>
                 </div>
               </div>
               <Button variant="destructive" onClick={() => removeFromCart(item.id)}>

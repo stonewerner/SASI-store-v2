@@ -19,8 +19,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Print On Demand Store",
-  description: "Your one-stop shop for custom printed products",
+  title: "SASI Store",
+  description: "SASI Store",
 };
 
 export default function RootLayout({

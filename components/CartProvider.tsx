@@ -35,7 +35,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
-      return [...prevCart, { ...item, quantity: 1 }];
+      return [...prevCart, { ...item, quantity: 1, thumbnail: item.thumbnail }];
     });
   };
 

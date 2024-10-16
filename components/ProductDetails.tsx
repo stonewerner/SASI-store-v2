@@ -19,7 +19,9 @@ export default function ProductDetails({ product }: { product: any }) {
       price: parseFloat(selectedVariant.retail_price),
       variant: selectedVariant.name,
       quantity: 1,
+      thumbnail: product.thumbnail_url || selectedVariant.preview_url,
     });
+    //TODO: ^ change to use variant specific image
 
     toast({
       title: "Product added to cart",
@@ -30,7 +32,7 @@ export default function ProductDetails({ product }: { product: any }) {
   return (
     <div className="flex flex-col md:flex-row gap-8">
       <div className="md:w-1/2">
-        {/*TODO:change Image src to be the variant specific image on product page*/}
+        {/*TODO: change Image src to be the variant specific image on product page*/}
         <Image
           src={product.thumbnail_url || selectedVariant.preview_url}
           alt={product.name}
