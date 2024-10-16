@@ -42,11 +42,26 @@ export async function fetchProducts() {
     id: product.id,
     name: product.name,
     thumbnail_url: product.thumbnail_url,
-    retail_price: product.retail_price,
+    variants: product.variants,
+    synced: product.synced
   }));
 }
 
 export async function fetchProductDetails(id: string) {
   const data = await fetchFromPrintful(`/store/products/${id}`);
-  return data.result;
+  const product = data.result.sync_product;
+  const variants = data.result.sync_variants;
+  return {
+    id: product.id,
+    name: product.name,
+    thumbnail_url: product.thumbnail_url,
+    variants: variants.map((variant: any) => ({
+      id: variant.id,
+      name: variant.name,
+      retail_price: variant.retail_price,
+      size: variant.size,
+      color: variant.color,
+      preview_url: variant.files[0]?.preview_url
+    }))
+  };
 }

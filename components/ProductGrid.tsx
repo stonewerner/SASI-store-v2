@@ -22,8 +22,8 @@ export default function ProductGrid({ products }: { products: any[] }) {
                 <h3 className="text-sm font-medium text-foreground line-clamp-2 flex-grow">{product.name}</h3>
               </CardContent>
               <CardFooter className="p-4 pt-0">
-                <p className="text-lg font-semibold text-foreground">
-                  {product.retail_price ? `$${product.retail_price.toFixed(2)}` : 'Price not available'}
+                <p className="text-sm text-muted-foreground">
+                  {product.variants} variant{product.variants !== 1 ? 's' : ''}
                 </p>
               </CardFooter>
             </Card>
