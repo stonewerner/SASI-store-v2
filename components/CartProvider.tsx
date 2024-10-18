@@ -29,13 +29,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addToCart = (item: any) => {
     setCart((prevCart: any) => {
-      const existingItem = prevCart.find((i: any) => i.id === item.id);
+      const existingItem = prevCart.find((i: any) => i.id === item.id && i.variantId === item.variantId);
       if (existingItem) {
         return prevCart.map((i: any) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id && i.variantId === item.variantId ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
-      return [...prevCart, { ...item, quantity: 1, thumbnail: item.thumbnail }];
+      return [...prevCart, { ...item, quantity: 1 }];
     });
   };
 
@@ -88,3 +88,4 @@ export function useCart() {
   }
   return context;
 }
+

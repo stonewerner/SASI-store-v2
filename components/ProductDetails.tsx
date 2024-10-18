@@ -14,7 +14,8 @@ export default function ProductDetails({ product }: { product: any }) {
 
   const handleAddToCart = () => {
     addToCart({
-      id: selectedVariant.id,
+      id: product.id,
+      variantId: selectedVariant.id,
       name: `${product.name} - ${selectedVariant.name}`,
       price: parseFloat(selectedVariant.retail_price),
       variant: selectedVariant.name,

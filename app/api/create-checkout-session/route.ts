@@ -3,28 +3,33 @@ import Stripe from 'stripe';
 import { fetchProductDetails } from '@/lib/printful';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16', // Keep the newer API version
+  apiVersion: '2023-10-16',
 });
 
 export async function POST(request: Request) {
   try {
     const { items } = await request.json();
 
-    // Validate and get accurate product details
     const lineItems = await Promise.all(items.map(async (item: any) => {
       const product = await fetchProductDetails(item.id);
       if (!product) {
         throw new Error(`Product not found: ${item.id}`);
       }
+      const variant = product.variants.find((v: any) => v.id === item.variantId);
+      if (!variant) {
+        throw new Error(`Variant not found: ${item.variantId}`);
+      }
+      if (parseFloat(variant.retail_price) !== item.price) {
+        throw new Error(`Price mismatch for ${product.name}`);
+      }
       return {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: product.name,
-            images: [product.thumbnail_url],
-            description: item.variant, // Added from bolt suggestion
+            name: `${product.name} - ${variant.name}`,
+            images: [variant.preview_url || product.thumbnail_url],
           },
-          unit_amount: Math.round(product.retail_price * 100),
+          unit_amount: Math.round(parseFloat(variant.retail_price) * 100),
         },
         quantity: item.quantity,
       };
@@ -38,7 +43,7 @@ export async function POST(request: Request) {
       cancel_url: `${request.headers.get('origin')}/cart`,
     });
 
-    return NextResponse.json({ id: session.id }); // Changed to match bolt suggestion
+    return NextResponse.json({ id: session.id });
   } catch (error) {
     console.error('Checkout session error:', error);
     return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 });

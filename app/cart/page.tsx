@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import Image from 'next/image';
+import { useToast } from "@/hooks/use-toast";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity } = useCart();
   const [isClient, setIsClient] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     setIsClient(true);
@@ -18,6 +20,9 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     try {
+      const stripe = await stripePromise;
+      if (!stripe) throw new Error('Stripe failed to load');
+
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -30,16 +35,20 @@ export default function CartPage() {
         throw new Error('Failed to create checkout session');
       }
 
-      const { sessionId } = await response.json();
-      const stripe = await stripePromise;
-      const result = await stripe!.redirectToCheckout({ sessionId });
+      const { id: sessionId } = await response.json();
+
+      const result = await stripe.redirectToCheckout({ sessionId });
 
       if (result.error) {
         throw new Error(result.error.message);
       }
     } catch (error) {
       console.error('Checkout error:', error);
-      // Show error to user
+      toast({
+        title: "Checkout Error",
+        description: "There was a problem initiating the checkout process. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
