@@ -4,11 +4,13 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useCart } from '@/components/CartProvider';
 
 export default function SuccessPage() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
+  const { clearCart } = useCart();
 
   useEffect(() => {
     const fetchCheckoutSession = async () => {
@@ -17,6 +19,7 @@ export default function SuccessPage() {
           const response = await fetch(`/api/checkout-session?session_id=${sessionId}`);
           if (response.ok) {
             setStatus('success');
+            clearCart(); // Clear the cart after successful checkout
           } else {
             setStatus('error');
           }
@@ -28,7 +31,7 @@ export default function SuccessPage() {
     };
 
     fetchCheckoutSession();
-  }, [sessionId]);
+  }, [sessionId, clearCart]);
 
   if (status === 'loading') {
     return <div>Loading...</div>;

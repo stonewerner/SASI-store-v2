@@ -11,8 +11,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const { toast } = useToast();
 
-
-
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
@@ -70,12 +68,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
+  const clearCart = () => {
+    setCart([]);
+    localStorage.removeItem('cart');
+    toast({
+      title: "Cart cleared",
+      description: "Your cart has been cleared after successful checkout.",
+    });
+  };
+
   if (!isLoaded) {
     return null; // or a loading spinner
   }
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart }}>
       {children}
     </CartContext.Provider>
   );
@@ -88,4 +95,3 @@ export function useCart() {
   }
   return context;
 }
-
