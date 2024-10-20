@@ -71,10 +71,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = () => {
     setCart([]);
     localStorage.removeItem('cart');
-    toast({
-      title: "Cart cleared",
-      description: "Your cart has been cleared after successful checkout.",
-    });
   };
 
   if (!isLoaded) {
