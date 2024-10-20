@@ -78,6 +78,12 @@ export async function createPrintfulOrder(session: Stripe.Checkout.Session) {
   console.log('Full session object:', JSON.stringify(session, null, 2));
 
   try {
+    // Extract shipping details
+    const shippingDetails = session.shipping_details;
+    if (!shippingDetails) {
+      throw new Error('Missing shipping details in the session');
+    }
+
     const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { expand: ['data.price.product'] });
     console.log('Line items:', JSON.stringify(lineItems, null, 2));
 
@@ -96,19 +102,20 @@ export async function createPrintfulOrder(session: Stripe.Checkout.Session) {
 
     const order = {
       recipient: {
-        name: session.customer_details?.name,
-        address1: session.customer_details?.address?.line1,
-        city: session.customer_details?.address?.city,
-        state_code: session.customer_details?.address?.state,
-        country_code: session.customer_details?.address?.country,
-        zip: session.customer_details?.address?.postal_code,
+        name: shippingDetails.name,
+        address1: shippingDetails.address?.line1,
+        address2: shippingDetails.address?.line2,
+        city: shippingDetails.address?.city,
+        state_code: shippingDetails.address?.state,
+        country_code: shippingDetails.address?.country,
+        zip: shippingDetails.address?.postal_code,
       },
       items: orderItems,
     };
 
     console.log('Sending order to Printful:', JSON.stringify(order, null, 2));
 
-    if (!order.recipient.name || !order.recipient.address1 || !order.recipient.city || !order.recipient.country_code) {
+    if (!order.recipient.name || !order.recipient.address1 || !order.recipient.city || !order.recipient.country_code || !order.recipient.zip) {
       console.error('Missing required shipping information:', order.recipient);
       throw new Error('Missing required shipping information');
     }
