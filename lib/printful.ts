@@ -1,6 +1,11 @@
 import { mockProducts, mockProductDetails } from './mockData';
+import { Stripe } from 'stripe';
 
-const PRINTFUL_API_URL = 'https://api.printful.com';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-09-30.acacia',
+});
+
 
 async function fetchFromPrintful(endpoint: string) {
   if (!process.env.PRINTFUL_API_KEY) {
@@ -9,7 +14,7 @@ async function fetchFromPrintful(endpoint: string) {
   }
 
   try {
-    const response = await fetch(`${PRINTFUL_API_URL}${endpoint}`, {
+    const response = await fetch(`${process.env.PRINTFUL_API_URL}${endpoint}`, {
       headers: {
         'Authorization': `Bearer ${process.env.PRINTFUL_API_KEY}`,
       },
@@ -64,4 +69,69 @@ export async function fetchProductDetails(id: string) {
       preview_url: variant.files[0]?.preview_url
     }))
   };
+}
+
+
+
+export async function createPrintfulOrder(session: Stripe.Checkout.Session) {
+  console.log('Creating Printful order for session:', session.id);
+  console.log('Full session object:', JSON.stringify(session, null, 2));
+
+  try {
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { expand: ['data.price.product'] });
+    console.log('Line items:', JSON.stringify(lineItems, null, 2));
+
+    const orderItems = lineItems.data.map(item => {
+      const product = item.price?.product as Stripe.Product | null;
+      const printfulVariantId = product?.metadata?.printful_variant_id;
+      if (!printfulVariantId) {
+        throw new Error(`Missing Printful variant ID for item: ${item.description}`);
+      }
+      return {
+        sync_variant_id: parseInt(printfulVariantId),
+        quantity: item.quantity,
+        retail_price: item.price?.unit_amount ? item.price.unit_amount / 100 : 0,
+      };
+    });
+
+    const order = {
+      recipient: {
+        name: session.customer_details?.name,
+        address1: session.customer_details?.address?.line1,
+        city: session.customer_details?.address?.city,
+        state_code: session.customer_details?.address?.state,
+        country_code: session.customer_details?.address?.country,
+        zip: session.customer_details?.address?.postal_code,
+      },
+      items: orderItems,
+    };
+
+    console.log('Sending order to Printful:', JSON.stringify(order, null, 2));
+
+    if (!order.recipient.name || !order.recipient.address1 || !order.recipient.city || !order.recipient.country_code) {
+      console.error('Missing required shipping information:', order.recipient);
+      throw new Error('Missing required shipping information');
+    }
+
+    const response = await fetch('https://api.printful.com/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.PRINTFUL_API_KEY}`,
+      },
+      body: JSON.stringify(order),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to create Printful order: ${response.status} ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log('Printful order created:', result);
+    return result;
+  } catch (error: any) {
+    console.error('Error in createPrintfulOrder:', error.message, error.stack);
+    throw error;
+  }
 }

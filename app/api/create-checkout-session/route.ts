@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { fetchProductDetails } from '@/lib/printful';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
+  apiVersion: '2024-09-30.acacia',
 });
 
 export async function POST(request: Request) {
@@ -28,6 +28,9 @@ export async function POST(request: Request) {
           product_data: {
             name: `${product.name} - ${variant.name}`,
             images: [variant.preview_url || product.thumbnail_url],
+            metadata: {
+              printful_variant_id: variant.id.toString(),
+            },
           },
           unit_amount: Math.round(parseFloat(variant.retail_price) * 100),
         },
@@ -41,6 +44,10 @@ export async function POST(request: Request) {
       mode: 'payment',
       success_url: `${request.headers.get('origin')}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${request.headers.get('origin')}/cart`,
+      billing_address_collection: 'required',
+      shipping_address_collection: {
+        allowed_countries: ['US', 'CA'], // Add countries you want to ship to
+      },
     });
 
     return NextResponse.json({ id: session.id });
